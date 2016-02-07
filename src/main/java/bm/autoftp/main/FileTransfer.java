@@ -13,10 +13,7 @@ import bm.autoftp.data.*;
 public class FileTransfer {
 
 	private MonitoredDirectory dir;
-	private String host = "192.168.2.14";
-	private int port = 22;
-	private String user = "pi";
-	private String password = "raspberry";
+	private RemoteServer serv;
 
 	private Session session = null;
 	private Channel channel = null;
@@ -24,12 +21,15 @@ public class FileTransfer {
 	private String SFTPWORKINGDIR = "FTP/testdir";
 	private SimpleDateFormat sdf = DateFormatter.getInstance();
 
-	public FileTransfer(MonitoredDirectory dir) {
+	public FileTransfer(MonitoredDirectory dir, RemoteServer serv) 
+	{
 		this.dir = dir;
+		this.serv = serv;
 
 	}
 
-	public FileTransfer() {
+	public FileTransfer() 
+	{
 
 	}
 
@@ -53,8 +53,8 @@ public class FileTransfer {
 		try {
 			JSch jsch = new JSch();
 
-			session = jsch.getSession(user, host, port);
-			session.setPassword(password);
+			session = jsch.getSession(serv.getUser(), serv.getHost(), serv.getPort());
+			session.setPassword(serv.getPassword());
 
 			java.util.Properties config = new java.util.Properties();
 
@@ -121,8 +121,10 @@ public class FileTransfer {
 		try {
 			channel.cd(SFTPWORKINGDIR);
 			File f = new File(file.getFilePath(), file.getName());
-			System.out.println(file.getFilePath() + "/" + f.getName());
-			channel.put(new FileInputStream(f), file.getFilePath() + "/" + f.getName());
+			String path = f.getPath();
+			System.out.println(channel.pwd());
+			channel.put(new FileInputStream(f), (f.getName()));
+			
 			channel.disconnect();
 			return true;
 		}

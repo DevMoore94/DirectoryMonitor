@@ -69,35 +69,22 @@ public class DirectoryMonitorDaemon implements Daemon {
 		myThread = null;
 	}
 	
+	/*When connecting with JSch to my raspberry pi it defaults to /home/pi/
+	 * So when changing directories I work forward from there.
+	 * ex: cd FTP/testdir/ 
+	 * 
+	 * */
+	
+	//For testing purposes only. Have not setup daemon yet.
 	public static void main(String[] args){
-		/*DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
 		
-		//Test Data
-		File file = new File("D:/w/FtpTest/bin/bm/FtpTest/main/dir/test.txt");
-		TrackedFile file1 = new TrackedFile("test.txt","D:/w/FtpTest/bin/bm/FtpTest/main/dir/",dateFormat.format(file.lastModified()));
-		
-		ArrayList<TrackedFile> files = new ArrayList<TrackedFile>();
-		files.add(file1);*/
-		
-		RemoteServer server = new RemoteServer("192.168.2.16", "FTP");
-		
+		RemoteServer server = new RemoteServer("host", "remote dir","user","pass", 22); //22 is the port number
+
 		MonitoredDirectory monDir = SetupMonitoredDirectory.setup(new MonitoredDirectory("D:/testdir/",server));
-		
-		
-		FileTransfer trans = new FileTransfer(monDir);
+			
+		FileTransfer trans = new FileTransfer(monDir, server);
 		trans.createRemoteDirectory("D:/testdir/", "FTP/testdir");
 		trans.monitor();
-		
-		
-		/*for (TrackedFile file : monDir.getFiles()){
-			System.out.println(file.getLastModified());
-		}*/
-		
-		
-		
-		
-		
-	}
-
 	
+	}
 }
